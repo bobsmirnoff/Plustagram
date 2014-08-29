@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bobsmirnoff.plustagram20.Dialogs.EditRecordDialog;
+import com.bobsmirnoff.plustagram20.Dialogs.ReturnDialogInfo;
+
 import java.util.ArrayList;
 import java.util.Vector;
 

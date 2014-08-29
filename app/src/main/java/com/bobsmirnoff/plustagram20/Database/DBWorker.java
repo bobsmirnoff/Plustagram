@@ -1,4 +1,4 @@
-package com.bobsmirnoff.plustagram20;
+package com.bobsmirnoff.plustagram20.Database;
 
 import android.content.ContentValues;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.bobsmirnoff.plustagram20;
+package com.bobsmirnoff.plustagram20.Dialogs;
 
 
 import android.app.DialogFragment;
@@ -13,6 +13,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.bobsmirnoff.plustagram20.R;
+import com.bobsmirnoff.plustagram20.SinglePersonActivity;
 
 public class EditRecordDialog extends DialogFragment implements View.OnClickListener, TextWatcher {
 

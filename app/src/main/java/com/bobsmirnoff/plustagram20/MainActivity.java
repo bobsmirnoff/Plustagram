@@ -11,6 +11,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.bobsmirnoff.plustagram20.Database.DBHelper;
+import com.bobsmirnoff.plustagram20.Database.DBWorker;
+import com.bobsmirnoff.plustagram20.Dialogs.NewEntryDialog;
+import com.bobsmirnoff.plustagram20.Dialogs.ReturnDialogInfo;
+
 public class MainActivity extends Activity implements ReturnDialogInfo, AdapterView.OnItemClickListener {
 
     public static final String ENTRY_ID_KEY = "id";
