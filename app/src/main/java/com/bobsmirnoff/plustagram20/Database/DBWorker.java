@@ -35,6 +35,22 @@ public class DBWorker {
         return db.query(DB_TABLE, null, null, null, null, null, COLUMN_COUNT + " DESC");
     }
 
+    public Cursor getNameById(long id) {
+        return db.query(DB_TABLE,
+                new String[]{COLUMN_NAME},
+                COLUMN_ID + " = ?",
+                new String[]{Long.valueOf(id).toString()},
+                null, null, null);
+    }
+
+    public Cursor getCountById(long id) {
+        return db.query(DB_TABLE,
+                new String[]{COLUMN_COUNT},
+                COLUMN_ID + " = ?",
+                new String[]{Long.valueOf(id).toString()},
+                null, null, null);
+    }
+
     public void addRecord(String name) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
@@ -48,5 +64,13 @@ public class DBWorker {
 
     public void deleteAll() {
         context.deleteDatabase(DB_NAME);
+    }
+
+    public Cursor getById(long id) {
+        return db.query(DB_TABLE,
+                null,
+                COLUMN_ID + " = ?",
+                new String[]{Long.valueOf(id).toString()},
+                null, null, null);
     }
 }

@@ -2,35 +2,39 @@ package com.bobsmirnoff.plustagram20;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bobsmirnoff.plustagram20.Database.DBWorker;
+import com.bobsmirnoff.plustagram20.Dialogs.CommentDialog;
+import com.bobsmirnoff.plustagram20.Dialogs.DeleteDialog;
 import com.bobsmirnoff.plustagram20.Dialogs.EditRecordDialog;
 import com.bobsmirnoff.plustagram20.Dialogs.ReturnDialogInfo;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 public class SinglePersonActivity extends Activity implements View.OnClickListener, ReturnDialogInfo {
 
-    public static final int REQUEST_CODE_EDIT = 69;
+    public static final int REQUEST_CODE_EDIT = 10;
+    public static final int REQUEST_CODE_DELETE = 11;
     public static final String OLD_NAME_KEY = "old_name";
-
-    private static final String ACTION_DELETE = "delete";
-    private static final String ACTION_RENAME = "rename";
-    private static final String ACTION_INCREMENT = "increment";
-
-    ArrayList<Vector> actions;
+    public static final String RECORD_DELETED_KEY = "record deleted";
+    private static final int REQUEST_CODE_COMMENT = 12;
+    private static final int ACTION_RENAME = 1;
+    private static final int ACTION_DELETE = 2;
+    private static final int ACTION_INCREMENT = 3;
+    Cursor cursor;
+    private int dialogAction;
+    private DBWorker db;
+    private String oldName;
 
     private String entryName;
     private String entryCount;
+
     private int id;
-
-
-    private EditRecordDialog dialog;
     private TextView TVname;
     private TextView TVcount;
 
@@ -41,10 +45,31 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
 
         Intent intent = getIntent();
         id = intent.getIntExtra(MainActivity.ENTRY_ID_KEY, -1);
-        entryName = intent.getStringExtra(MainActivity.ENTRY_ACTIVITY_NAME_KEY);
-        entryCount = intent.getStringExtra(MainActivity.ENTRY_ACTIVITY_PLUSES_COUNT_KEY);
+        entryName = "Bob";
+        entryCount = "10";
 
-        actions = new ArrayList<Vector>();
+        db = new DBWorker(this);
+        db.open();
+
+        cursor = db.getById(id);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String str;
+                do {
+                    str = "";
+                    for (String cn : cursor.getColumnNames()) {
+                        str = str.concat(cn + " = "
+                                + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
+                    }
+                    Log.d(MainActivity.TAG, str);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } else Log.d(MainActivity.TAG, "Cursor is null");
+
+
+        cursor = db.getNameById(id);
 
         Button editButton = (Button) findViewById(R.id.single_edit);
         Button deleteButton = (Button) findViewById(R.id.single_delete);
@@ -79,8 +104,6 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
 
         editButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
-
-        dialog = new EditRecordDialog();
     }
 
     private int valueInDp(int sizeInPx) {
@@ -90,31 +113,57 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+
         Bundle args = new Bundle();
+        args.putString(OLD_NAME_KEY, entryName);
+
         switch (v.getId()) {
             case R.id.single_edit:
+                EditRecordDialog editDialog = new EditRecordDialog();
 
-                args.putString(OLD_NAME_KEY, entryName);
-                dialog.setArguments(args);
-                dialog.show(getFragmentManager(), "edit_entry_dialog");
-                dialog.setTargetFragment(dialog, REQUEST_CODE_EDIT);
-
+                editDialog.setArguments(args);
+                editDialog.show(getFragmentManager(), "edit_entry_dialog");
+                editDialog.setTargetFragment(editDialog, REQUEST_CODE_EDIT);
+                dialogAction = ACTION_RENAME;
                 break;
 
             case R.id.single_delete:
-                //TODO delete dialog
+                DeleteDialog deleteDialog = new DeleteDialog();
+
+                deleteDialog.setArguments(args);
+                deleteDialog.show(getFragmentManager(), "delete_entry_dialog");
+                deleteDialog.setTargetFragment(deleteDialog, REQUEST_CODE_DELETE);
+                dialogAction = ACTION_DELETE;
 
                 break;
 
             case R.id.single_pluses:
-                //TODO comment dialog
+                CommentDialog commentDialog = new CommentDialog();
+
+                commentDialog.setArguments(args);
+                commentDialog.show(getFragmentManager(), "comment_plus_dialog");
+                commentDialog.setTargetFragment(commentDialog, REQUEST_CODE_COMMENT);
+                dialogAction = ACTION_INCREMENT;
                 break;
         }
     }
 
     @Override
     public void onFinishEditDialog(String input) {
-        entryName = input;
-        TVname.setText(input);
+        switch (dialogAction) {
+            case ACTION_RENAME:
+                TVname.setText(input);
+                entryName = input;
+                //TODO what's next
+                break;
+
+            case ACTION_DELETE:
+                //TODO if deleted
+                break;
+
+            case ACTION_INCREMENT:
+                //TODO if commented
+                break;
+        }
     }
 }

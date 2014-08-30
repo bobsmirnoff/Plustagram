@@ -29,9 +29,9 @@ public class NewEntryDialog extends DialogFragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.entry_dialog, null);
 
-        okButton = (Button) v.findViewById(R.id.addDialogButton);
-        okButton.setText("Ok, you can be on the list");
-        v.findViewById(R.id.addDialogButton).setOnClickListener(this);
+        okButton = (Button) v.findViewById(R.id.yesDialogButton);
+        okButton.setText("Ok");
+        v.findViewById(R.id.yesDialogButton).setOnClickListener(this);
         v.findViewById(R.id.cancelDialogButton).setOnClickListener(this);
 
         ((TextView) v.findViewById(R.id.dialogTitle)).setText("New entry");
@@ -46,7 +46,7 @@ public class NewEntryDialog extends DialogFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.addDialogButton:
+            case R.id.yesDialogButton:
                 ReturnDialogInfo activity = (ReturnDialogInfo) getActivity();
                 activity.onFinishEditDialog(editText.getText().toString());
             case R.id.cancelDialogButton:

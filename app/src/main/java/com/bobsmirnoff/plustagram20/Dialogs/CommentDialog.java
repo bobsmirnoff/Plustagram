@@ -4,8 +4,7 @@ package com.bobsmirnoff.plustagram20.Dialogs;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.bobsmirnoff.plustagram20.MainActivity;
 import com.bobsmirnoff.plustagram20.R;
 import com.bobsmirnoff.plustagram20.SinglePersonActivity;
 
-public class EditRecordDialog extends DialogFragment implements View.OnClickListener, TextWatcher {
+public class CommentDialog extends DialogFragment implements View.OnClickListener {
 
     EditText editText;
     Button okButton;
+    Button cancelButton;
     String name;
 
     @Override
@@ -33,20 +34,22 @@ public class EditRecordDialog extends DialogFragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.entry_dialog, null);
+        View v = inflater.inflate(R.layout.comment_dialog, null);
 
         okButton = (Button) v.findViewById(R.id.yesDialogButton);
         okButton.setText("Seems legit");
 
+        okButton = (Button) v.findViewById(R.id.cancelDialogButton);
+        okButton.setText("Cancel!");
+
         v.findViewById(R.id.yesDialogButton).setOnClickListener(this);
         v.findViewById(R.id.cancelDialogButton).setOnClickListener(this);
-        ((TextView) v.findViewById(R.id.dialogTitle)).setText("Edit name");
+        Log.d(MainActivity.TAG, name);
+        ((TextView) v.findViewById(R.id.commentUsername)).setText(name);
 
-        editText = (EditText) v.findViewById(R.id.newEntryDialogField);
-        editText.setText(name);
-        editText.setHint("New fancy name");
+        editText = (EditText) v.findViewById(R.id.commentField);
+        editText.setHint("Why a plus?");
         editText.requestFocus();
-        editText.addTextChangedListener(this);
 
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
@@ -57,9 +60,9 @@ public class EditRecordDialog extends DialogFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.yesDialogButton:
-                name = editText.getText().toString();
+                String comment = editText.getText().toString();
                 ReturnDialogInfo activity = (ReturnDialogInfo) getActivity();
-                activity.onFinishEditDialog(editText.getText().toString());
+                activity.onFinishEditDialog(comment);
             case R.id.cancelDialogButton:
                 this.dismiss();
         }
@@ -72,28 +75,8 @@ public class EditRecordDialog extends DialogFragment implements View.OnClickList
     }
 
     @Override
-    public void onStart() {
-        editText.setText(name);
-        editText.setSelection(editText.getText().length());
-        super.onStart();
-    }
-
-    @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.length() == 0) okButton.setEnabled(false);
-        else if (s.length() == 1) okButton.setEnabled(true);
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-    }
 }

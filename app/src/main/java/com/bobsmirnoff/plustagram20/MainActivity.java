@@ -22,13 +22,10 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
     public static final String ENTRY_ACTIVITY_NAME_KEY = "name";
     public static final String ENTRY_ACTIVITY_PLUSES_COUNT_KEY = "count";
 
-    private static final String TAG = "MyActivity";
+    public static final String TAG = "MyActivity";
     private static final int REQUEST_CODE = 69;
     final String ATTRIBUTE_NAME = "text";
     final String ATTRIBUTE_PLUS = "pluses";
-    String[] names = {"Иван", "Иван", "Марья", "Петр", "Антон", "Даша", "Борис",
-            "Костя", "Игорь", "Игорь", "Игорь", "Игорь", "Игорь"};
-    int[] pls = {100, 12, 11, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     ListView list;
     DBWorker db;
@@ -79,11 +76,9 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(this, SinglePersonActivity.class);
-
         SQLiteCursor sqlCursor = (SQLiteCursor) parent.getItemAtPosition(position);
         intent.putExtra(ENTRY_ID_KEY, sqlCursor.getInt(sqlCursor.getColumnIndex(DBHelper.COLUMN_ID)));
-        intent.putExtra(ENTRY_ACTIVITY_NAME_KEY, sqlCursor.getString(sqlCursor.getColumnIndex(DBHelper.COLUMN_NAME)));
-        intent.putExtra(ENTRY_ACTIVITY_PLUSES_COUNT_KEY, sqlCursor.getString(sqlCursor.getColumnIndex(DBHelper.COLUMN_COUNT)));
+        db.close();
 
         startActivity(intent);
     }
