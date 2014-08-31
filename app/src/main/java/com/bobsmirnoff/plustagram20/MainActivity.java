@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
 
     @Override
     public void onFinishEditDialog(String input) {
-        db.addRecord(input);
+        db.add(input);
         cursor.requery();
     }
 

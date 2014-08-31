@@ -20,21 +20,24 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
 
     public static final int REQUEST_CODE_EDIT = 10;
     public static final int REQUEST_CODE_DELETE = 11;
+
     public static final String OLD_NAME_KEY = "old_name";
     public static final String RECORD_DELETED_KEY = "record deleted";
     private static final int REQUEST_CODE_COMMENT = 12;
+
     private static final int ACTION_RENAME = 1;
     private static final int ACTION_DELETE = 2;
     private static final int ACTION_INCREMENT = 3;
-    Cursor cursor;
-    private int dialogAction;
-    private DBWorker db;
-    private String oldName;
 
+    Cursor cursor;
+    private DBWorker db;
+
+    private long entryId;
     private String entryName;
     private String entryCount;
 
-    private int id;
+    private int dialogAction;
+
     private TextView TVname;
     private TextView TVcount;
 
@@ -43,33 +46,24 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_person_layout);
 
-        Intent intent = getIntent();
-        id = intent.getIntExtra(MainActivity.ENTRY_ID_KEY, -1);
-        entryName = "Bob";
-        entryCount = "10";
-
         db = new DBWorker(this);
         db.open();
 
-        cursor = db.getById(id);
+        Intent intent = getIntent();
+        entryId = intent.getIntExtra(MainActivity.ENTRY_ID_KEY, -1);
+
+        cursor = db.getById(entryId);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                String str;
                 do {
-                    str = "";
-                    for (String cn : cursor.getColumnNames()) {
-                        str = str.concat(cn + " = "
-                                + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
-                    }
-                    Log.d(MainActivity.TAG, str);
+                    entryName = cursor.getString(cursor.getColumnIndex(DBWorker.COLUMN_NAME));
+                    entryCount = cursor.getString(cursor.getColumnIndex(DBWorker.COLUMN_COUNT));
+                    Log.d(MainActivity.TAG, String.valueOf(entryId) + entryName + String.valueOf(entryCount));
                 } while (cursor.moveToNext());
             }
             cursor.close();
-        } else Log.d(MainActivity.TAG, "Cursor is null");
-
-
-        cursor = db.getNameById(id);
+        }
 
         Button editButton = (Button) findViewById(R.id.single_edit);
         Button deleteButton = (Button) findViewById(R.id.single_delete);
@@ -152,13 +146,16 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
     public void onFinishEditDialog(String input) {
         switch (dialogAction) {
             case ACTION_RENAME:
+                db.rename(entryId, input);
                 TVname.setText(input);
                 entryName = input;
-                //TODO what's next
                 break;
 
             case ACTION_DELETE:
-                //TODO if deleted
+                if (input == RECORD_DELETED_KEY) {
+                    db.delete(entryId);
+                    finish();
+                }
                 break;
 
             case ACTION_INCREMENT:
