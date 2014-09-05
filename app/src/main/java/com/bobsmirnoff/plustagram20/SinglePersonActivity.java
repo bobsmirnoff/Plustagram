@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bobsmirnoff.plustagram20.Database.DBHelper;
 import com.bobsmirnoff.plustagram20.Database.DBWorker;
 import com.bobsmirnoff.plustagram20.Dialogs.CommentDialog;
 import com.bobsmirnoff.plustagram20.Dialogs.DeleteDialog;
@@ -30,11 +31,11 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
     private static final int ACTION_INCREMENT = 3;
 
     Cursor cursor;
-    private DBWorker db;
+    private DBWorker dbw;
 
     private long entryId;
     private String entryName;
-    private String entryCount;
+    private int entryCount;
 
     private int dialogAction;
 
@@ -46,24 +47,44 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_person_layout);
 
-        db = new DBWorker(this);
-        db.open();
+        dbw = new DBWorker(this);
+        dbw.open();
 
         Intent intent = getIntent();
         entryId = intent.getIntExtra(MainActivity.ENTRY_ID_KEY, -1);
 
-        cursor = db.getById(entryId);
+        cursor = dbw.getPersonById(entryId);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    entryName = cursor.getString(cursor.getColumnIndex(DBWorker.COLUMN_NAME));
-                    entryCount = cursor.getString(cursor.getColumnIndex(DBWorker.COLUMN_COUNT));
-                    Log.d(MainActivity.TAG, String.valueOf(entryId) + entryName + String.valueOf(entryCount));
+                    entryName = cursor.getString(cursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_NAME));
+                    entryCount = cursor.getInt(cursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_COUNT));
+//                    Log.d(MainActivity.TAG, String.valueOf(entryId) + entryName + String.valueOf(entryCount));
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
+
+        Cursor plusesCursor = dbw.getAllPluses();
+        if (plusesCursor != null) {
+            if (plusesCursor.moveToFirst()) {
+                String str;
+                do {
+                    str = "";
+                    for (String cn : plusesCursor.getColumnNames()) {
+                        str = str.concat(cn + " = "
+                                + plusesCursor.getString(plusesCursor.getColumnIndex(cn)) + "; ");
+                    }
+                    Log.d(MainActivity.TAG, str);
+                    /*long id = plusesCursor.getLong(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_ID));
+                    String comment = plusesCursor.getString(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_COMMENT));
+                    String date = plusesCursor.getString(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_DATE));
+                    Log.d(MainActivity.TAG, "id = " + String.valueOf(id) + ", comment: " + comment + ", date: " + date);*/
+                } while (plusesCursor.moveToNext());
+            } else Log.d(MainActivity.TAG, "cursor is empty");
+            plusesCursor.close();
+        } else Log.d(MainActivity.TAG, "cursor is null");
 
         Button editButton = (Button) findViewById(R.id.single_edit);
         Button deleteButton = (Button) findViewById(R.id.single_delete);
@@ -74,24 +95,23 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         TVcount.setOnClickListener(this);
 
         TVname.setText(entryName);
-        TVcount.setText(entryCount);
 
         int leftPadding = 20;
         int rightPadding = 20;
         int length = TVcount.length();
 
-        if (Integer.valueOf(entryCount) == 0) {
+        if (entryCount == 0) {
             TVcount.setTextColor(R.color.dark_gray);
             TVcount.setBackgroundResource(R.drawable.pluses_text_faded);
             TVcount.setText("0");
             leftPadding = 46;
             rightPadding = 45;
             length = 1;
-        } else TVcount.setText("+" + entryCount);
+        } else TVcount.setText("+" + Integer.toString(entryCount));
 
         LinearLayout.LayoutParams paddingLayoutParams = (LinearLayout.LayoutParams) TVcount.getLayoutParams();
 
-        int padding = 28 * length - 20;
+        int padding = 30 * length - 25;
         TVcount.setPadding(valueInDp(leftPadding), valueInDp(padding) - 1, valueInDp(rightPadding), valueInDp(padding));
 
         TVcount.setLayoutParams(paddingLayoutParams);
@@ -146,20 +166,21 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
     public void onFinishEditDialog(String input) {
         switch (dialogAction) {
             case ACTION_RENAME:
-                db.rename(entryId, input);
+                dbw.renamePerson(entryId, input);
                 TVname.setText(input);
                 entryName = input;
                 break;
 
             case ACTION_DELETE:
                 if (input == RECORD_DELETED_KEY) {
-                    db.delete(entryId);
+                    dbw.deletePerson(entryId);
                     finish();
                 }
                 break;
 
             case ACTION_INCREMENT:
-                //TODO if commented
+                dbw.plus(entryId, input);
+                TVcount.setText("+" + Integer.toString(++entryCount));
                 break;
         }
     }

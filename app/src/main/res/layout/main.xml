@@ -18,7 +18,7 @@
 
     <LinearLayout
         android:id="@+id/llBottom"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@android:color/white"
@@ -31,31 +31,35 @@
             android:layout_columnSpan="2"
             android:background="@android:color/darker_gray"></View>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <TextView
+                android:id="@+id/plusescount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="9dp"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:text="@string/stats_ppl" />
+                android:text="PL\n69" />
 
             <TextView
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/buddiescount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="3dp"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:text="@string/stats_pls" />
-        </RelativeLayout>
+                android:text="BU\n69" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

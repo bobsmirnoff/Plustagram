@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bobsmirnoff.plustagram20.Database.DBHelper;
 import com.bobsmirnoff.plustagram20.Database.DBWorker;
@@ -24,13 +25,13 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
 
     public static final String TAG = "MyActivity";
     private static final int REQUEST_CODE = 69;
-    final String ATTRIBUTE_NAME = "text";
-    final String ATTRIBUTE_PLUS = "pluses";
 
     ListView list;
     DBWorker db;
     NewEntryDialog dialog;
     Cursor cursor;
+    private TextView buddiesCount;
+    private TextView plusesCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +45,13 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
         db = new DBWorker(this);
         db.open();
 
-        cursor = db.getAllSorted();
+        cursor = db.getAllPeopleSorted();
         startManagingCursor(cursor);
 
-        String from[] = new String[]{DBWorker.COLUMN_NAME, DBWorker.COLUMN_COUNT};
+        plusesCount = (TextView) findViewById(R.id.plusescount);
+        buddiesCount = (TextView) findViewById(R.id.buddiescount);
+
+        String from[] = new String[]{DBHelper.PEOPLE_COLUMN_NAME, DBHelper.PEOPLE_COLUMN_COUNT};
         int to[] = new int[]{R.id.item_name, R.id.item_pluses};
 
         MainListAdapter adapter = new MainListAdapter(this, R.layout.main_list_item, cursor, from, to);
@@ -69,7 +73,7 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
 
     @Override
     public void onFinishEditDialog(String input) {
-        db.add(input);
+        db.addPerson(input);
         cursor.requery();
     }
 
@@ -77,9 +81,14 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(this, SinglePersonActivity.class);
         SQLiteCursor sqlCursor = (SQLiteCursor) parent.getItemAtPosition(position);
-        intent.putExtra(ENTRY_ID_KEY, sqlCursor.getInt(sqlCursor.getColumnIndex(DBHelper.COLUMN_ID)));
-        db.close();
-
+        intent.putExtra(ENTRY_ID_KEY, sqlCursor.getInt(sqlCursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_ID)));
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        plusesCount.setText("Pluses awarded" + "\n" + db.getPlusesCount());
+        buddiesCount.setText("Buddies rated" + "\n" + db.getPlusedPeopleCount());
     }
 }

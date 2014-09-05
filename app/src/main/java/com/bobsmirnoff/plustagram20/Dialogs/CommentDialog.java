@@ -4,7 +4,6 @@ package com.bobsmirnoff.plustagram20.Dialogs;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.bobsmirnoff.plustagram20.MainActivity;
 import com.bobsmirnoff.plustagram20.R;
 import com.bobsmirnoff.plustagram20.SinglePersonActivity;
 
@@ -44,7 +42,6 @@ public class CommentDialog extends DialogFragment implements View.OnClickListene
 
         v.findViewById(R.id.yesDialogButton).setOnClickListener(this);
         v.findViewById(R.id.cancelDialogButton).setOnClickListener(this);
-        Log.d(MainActivity.TAG, name);
         ((TextView) v.findViewById(R.id.commentUsername)).setText(name);
 
         editText = (EditText) v.findViewById(R.id.commentField);
