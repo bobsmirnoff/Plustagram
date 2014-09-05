@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -66,7 +65,7 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
             cursor.close();
         }
 
-        Cursor plusesCursor = dbw.getAllPluses();
+        /*Cursor plusesCursor = dbw.getAllPluses();
         if (plusesCursor != null) {
             if (plusesCursor.moveToFirst()) {
                 String str;
@@ -77,14 +76,10 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
                                 + plusesCursor.getString(plusesCursor.getColumnIndex(cn)) + "; ");
                     }
                     Log.d(MainActivity.TAG, str);
-                    /*long id = plusesCursor.getLong(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_ID));
-                    String comment = plusesCursor.getString(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_COMMENT));
-                    String date = plusesCursor.getString(plusesCursor.getColumnIndex(DBHelper.PLUSES_COLUMN_DATE));
-                    Log.d(MainActivity.TAG, "id = " + String.valueOf(id) + ", comment: " + comment + ", date: " + date);*/
                 } while (plusesCursor.moveToNext());
             } else Log.d(MainActivity.TAG, "cursor is empty");
             plusesCursor.close();
-        } else Log.d(MainActivity.TAG, "cursor is null");
+        } else Log.d(MainActivity.TAG, "cursor is null");*/
 
         Button editButton = (Button) findViewById(R.id.single_edit);
         Button deleteButton = (Button) findViewById(R.id.single_delete);
@@ -93,28 +88,8 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         TVcount = (TextView) findViewById(R.id.single_pluses);
 
         TVcount.setOnClickListener(this);
-
+        setTextToCircle(TVcount, entryCount);
         TVname.setText(entryName);
-
-        int leftPadding = 20;
-        int rightPadding = 20;
-        int length = TVcount.length();
-
-        if (entryCount == 0) {
-            TVcount.setTextColor(R.color.dark_gray);
-            TVcount.setBackgroundResource(R.drawable.pluses_text_faded);
-            TVcount.setText("0");
-            leftPadding = 46;
-            rightPadding = 45;
-            length = 1;
-        } else TVcount.setText("+" + Integer.toString(entryCount));
-
-        LinearLayout.LayoutParams paddingLayoutParams = (LinearLayout.LayoutParams) TVcount.getLayoutParams();
-
-        int padding = 30 * length - 25;
-        TVcount.setPadding(valueInDp(leftPadding), valueInDp(padding) - 1, valueInDp(rightPadding), valueInDp(padding));
-
-        TVcount.setLayoutParams(paddingLayoutParams);
 
         editButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
@@ -180,8 +155,32 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
 
             case ACTION_INCREMENT:
                 dbw.plus(entryId, input);
-                TVcount.setText("+" + Integer.toString(++entryCount));
+                setTextToCircle(TVcount, ++entryCount);
                 break;
         }
+    }
+
+    private void setTextToCircle(TextView tv, int count) {
+        int leftPadding = 20;
+        int rightPadding = 20;
+        int length = String.valueOf(count).length();
+
+        if (count == 0) {
+            tv.setTextColor(getResources().getColor(R.color.dark_gray));
+            tv.setBackgroundResource(R.drawable.pluses_text_faded);
+            tv.setText("0");
+            leftPadding = 46;
+            rightPadding = 45;
+            length = 1;
+        } else {
+            tv.setText("+" + Integer.toString(count));
+            tv.setTextColor(getResources().getColor(R.color.main_orange));
+            tv.setBackgroundResource(R.drawable.pluses_text);
+        }
+
+        LinearLayout.LayoutParams paddingLayoutParams = (LinearLayout.LayoutParams) tv.getLayoutParams();
+        int padding = 29 * length - 21;
+        tv.setPadding(valueInDp(leftPadding), valueInDp(padding), valueInDp(rightPadding), valueInDp(padding + 1));
+        tv.setLayoutParams(paddingLayoutParams);
     }
 }

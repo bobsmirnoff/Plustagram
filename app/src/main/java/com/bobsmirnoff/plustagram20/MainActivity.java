@@ -20,8 +20,6 @@ import com.bobsmirnoff.plustagram20.Dialogs.ReturnDialogInfo;
 public class MainActivity extends Activity implements ReturnDialogInfo, AdapterView.OnItemClickListener {
 
     public static final String ENTRY_ID_KEY = "id";
-    public static final String ENTRY_ACTIVITY_NAME_KEY = "name";
-    public static final String ENTRY_ACTIVITY_PLUSES_COUNT_KEY = "count";
 
     public static final String TAG = "MyActivity";
     private static final int REQUEST_CODE = 69;
@@ -30,6 +28,8 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
     DBWorker db;
     NewEntryDialog dialog;
     Cursor cursor;
+    private MainListAdapter adapter;
+
     private TextView buddiesCount;
     private TextView plusesCount;
 
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
         String from[] = new String[]{DBHelper.PEOPLE_COLUMN_NAME, DBHelper.PEOPLE_COLUMN_COUNT};
         int to[] = new int[]{R.id.item_name, R.id.item_pluses};
 
-        MainListAdapter adapter = new MainListAdapter(this, R.layout.main_list_item, cursor, from, to);
+        adapter = new MainListAdapter(this, R.layout.main_list_item, cursor, from, to);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
@@ -90,5 +90,6 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
         super.onResume();
         plusesCount.setText("Pluses awarded" + "\n" + db.getPlusesCount());
         buddiesCount.setText("Buddies rated" + "\n" + db.getPlusedPeopleCount());
+        list.setAdapter(adapter);
     }
 }
