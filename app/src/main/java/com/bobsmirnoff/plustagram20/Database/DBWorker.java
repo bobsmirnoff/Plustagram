@@ -98,6 +98,7 @@ public class DBWorker {
 
     public void deletePerson(long id) {
         db.delete(DBHelper.DB_TABLE_PEOPLE, DBHelper.PEOPLE_COLUMN_ID + " = " + id, null);
+        db.delete(DBHelper.DB_TABLE_PLUSES, DBHelper.PLUSES_COLUMN_TOID + " = " + id, null);
     }
 
     public void deleteAllPeople() {
@@ -119,7 +120,8 @@ public class DBWorker {
                 null,
                 DBHelper.PLUSES_COLUMN_TOID + " = ?",
                 new String[]{Long.valueOf(id).toString()},
-                null, null, null);
+                null, null, DBHelper.PLUSES_COLUMN_DATE + " DESC, "
+                        + DBHelper.PLUSES_COLUMN_ID + " DESC");
     }
 
     public Cursor getAllPluses() {

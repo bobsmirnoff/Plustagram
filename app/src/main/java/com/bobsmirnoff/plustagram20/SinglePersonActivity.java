@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bobsmirnoff.plustagram20.Database.DBHelper;
@@ -29,7 +30,8 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
     private static final int ACTION_DELETE = 2;
     private static final int ACTION_INCREMENT = 3;
 
-    Cursor cursor;
+    Cursor personalDataCursor;
+    Cursor plusesCursor;
     private DBWorker dbw;
 
     private long entryId;
@@ -52,37 +54,29 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         Intent intent = getIntent();
         entryId = intent.getIntExtra(MainActivity.ENTRY_ID_KEY, -1);
 
-        cursor = dbw.getPersonById(entryId);
+        personalDataCursor = dbw.getPersonById(entryId);
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
+        if (personalDataCursor != null) {
+            if (personalDataCursor.moveToFirst()) {
                 do {
-                    entryName = cursor.getString(cursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_NAME));
-                    entryCount = cursor.getInt(cursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_COUNT));
-//                    Log.d(MainActivity.TAG, String.valueOf(entryId) + entryName + String.valueOf(entryCount));
-                } while (cursor.moveToNext());
+                    entryName = personalDataCursor.getString(personalDataCursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_NAME));
+                    entryCount = personalDataCursor.getInt(personalDataCursor.getColumnIndex(DBHelper.PEOPLE_COLUMN_COUNT));
+                } while (personalDataCursor.moveToNext());
             }
-            cursor.close();
+            personalDataCursor.close();
         }
 
-        /*Cursor plusesCursor = dbw.getAllPluses();
-        if (plusesCursor != null) {
-            if (plusesCursor.moveToFirst()) {
-                String str;
-                do {
-                    str = "";
-                    for (String cn : plusesCursor.getColumnNames()) {
-                        str = str.concat(cn + " = "
-                                + plusesCursor.getString(plusesCursor.getColumnIndex(cn)) + "; ");
-                    }
-                    Log.d(MainActivity.TAG, str);
-                } while (plusesCursor.moveToNext());
-            } else Log.d(MainActivity.TAG, "cursor is empty");
-            plusesCursor.close();
-        } else Log.d(MainActivity.TAG, "cursor is null");*/
 
         Button editButton = (Button) findViewById(R.id.single_edit);
         Button deleteButton = (Button) findViewById(R.id.single_delete);
+
+        plusesCursor = dbw.getPlussesForId(entryId);
+        startManagingCursor(plusesCursor);
+        ListView commentsList = (ListView) findViewById(R.id.commentsList);
+        String from[] = new String[]{DBHelper.PLUSES_COLUMN_DATE, DBHelper.PLUSES_COLUMN_COMMENT};
+        int to[] = new int[]{R.id.item_comment_date, R.id.item_comment_comment};
+        CommentsListAdapter adapter = new CommentsListAdapter(this, R.layout.single_list_item, plusesCursor, from, to);
+        commentsList.setAdapter(adapter);
 
         TVname = (TextView) findViewById(R.id.single_name);
         TVcount = (TextView) findViewById(R.id.single_pluses);
@@ -149,6 +143,7 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
             case ACTION_DELETE:
                 if (input == RECORD_DELETED_KEY) {
                     dbw.deletePerson(entryId);
+                    plusesCursor.close();
                     finish();
                 }
                 break;
@@ -156,6 +151,7 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
             case ACTION_INCREMENT:
                 dbw.plus(entryId, input);
                 setTextToCircle(TVcount, ++entryCount);
+                plusesCursor.requery();
                 break;
         }
     }
@@ -179,7 +175,7 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
         }
 
         LinearLayout.LayoutParams paddingLayoutParams = (LinearLayout.LayoutParams) tv.getLayoutParams();
-        int padding = 29 * length - 21;
+        int padding = 28 * length - 19;
         tv.setPadding(valueInDp(leftPadding), valueInDp(padding), valueInDp(rightPadding), valueInDp(padding + 1));
         tv.setLayoutParams(paddingLayoutParams);
     }

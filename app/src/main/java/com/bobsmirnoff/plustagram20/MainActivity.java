@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_layout);
 
         list = (ListView) findViewById(R.id.lvMain);
         dialog = new NewEntryDialog();
