@@ -3,18 +3,20 @@
 
     <application
         android:allowBackup="true"
-        android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.HoloOrangeGray.NoTitleBar">
+
         <activity
-            android:name="com.bobsmirnoff.plustagram20.MainActivity"
-            android:label="@string/app_name">
-            <intent-filter>
+            android:name="com.bobsmirnoff.plustagram20.NativeActivity"
+            android:label="@string/app_name"
+            android:noHistory="true">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".SinglePersonActivity" />
     </application>
 

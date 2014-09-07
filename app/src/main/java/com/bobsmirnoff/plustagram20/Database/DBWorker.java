@@ -135,6 +135,13 @@ public class DBWorker {
         return count;
     }
 
+    public int getPeopleCount() {
+        Cursor cursor = getAllPeople();
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
     public int getPlusedPeopleCount() {
         Cursor cursor = db.query(DBHelper.DB_TABLE_PLUSES, null, null, null,
                 DBHelper.PLUSES_COLUMN_TOID, null, null);

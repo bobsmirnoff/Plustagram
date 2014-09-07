@@ -173,7 +173,6 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
             tv.setTextColor(getResources().getColor(R.color.main_orange));
             tv.setBackgroundResource(R.drawable.pluses_text);
         }
-
         LinearLayout.LayoutParams paddingLayoutParams = (LinearLayout.LayoutParams) tv.getLayoutParams();
         int padding = 28 * length - 19;
         tv.setPadding(valueInDp(leftPadding), valueInDp(padding), valueInDp(rightPadding), valueInDp(padding + 1));

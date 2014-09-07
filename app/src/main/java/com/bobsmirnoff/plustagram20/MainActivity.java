@@ -32,6 +32,7 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
 
     private TextView buddiesCount;
     private TextView plusesCount;
+    private TextView noRecordsLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
 
         plusesCount = (TextView) findViewById(R.id.plusescount);
         buddiesCount = (TextView) findViewById(R.id.buddiescount);
+        noRecordsLabel = (TextView) findViewById(R.id.noRecordsLabel);
+        noRecordsLabel.setVisibility(View.INVISIBLE);
 
         String from[] = new String[]{DBHelper.PEOPLE_COLUMN_NAME, DBHelper.PEOPLE_COLUMN_COUNT};
         int to[] = new int[]{R.id.item_name, R.id.item_pluses};
@@ -69,12 +72,16 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
         };
 
         addButton.setOnClickListener(listener);
+
+
     }
 
     @Override
     public void onFinishEditDialog(String input) {
         db.addPerson(input);
         cursor.requery();
+        noRecordsLabel.setVisibility(View.INVISIBLE);
+        list.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -90,6 +97,13 @@ public class MainActivity extends Activity implements ReturnDialogInfo, AdapterV
         super.onResume();
         plusesCount.setText("Pluses awarded" + "\n" + db.getPlusesCount());
         buddiesCount.setText("Buddies rated" + "\n" + db.getPlusedPeopleCount());
+        if (db.getPeopleCount() == 0) {
+            noRecordsLabel.setVisibility(View.VISIBLE);
+            list.setVisibility(View.INVISIBLE);
+        } else {
+            noRecordsLabel.setVisibility(View.INVISIBLE);
+            list.setVisibility(View.VISIBLE);
+        }
         list.setAdapter(adapter);
     }
 }

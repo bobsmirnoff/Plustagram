@@ -15,6 +15,21 @@
         android:paddingBottom="57dp"
         android:weightSum="1" />
 
+    <TextView
+        android:id="@+id/noRecordsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:paddingBottom="57dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Currently you have no friends to rate :(\n\nAdd one by tapping a plus below"
+        android:textColor="@color/dark_gray"
+        android:textSize="30dp"
+        android:weightSum="1" />
+
 
     <LinearLayout
         android:id="@+id/llBottom"
@@ -42,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="sans-serif-thin"
                 android:gravity="center"
                 android:text="PL\n69" />
 
@@ -56,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="sans-serif-thin"
                 android:gravity="center"
                 android:text="BU\n69" />
 
