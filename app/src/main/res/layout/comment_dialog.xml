@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
+        android:gravity="center"
         android:text="Username"
         android:textColor="@android:color/white"
         android:textSize="35dp" />
