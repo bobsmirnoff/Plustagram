@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bobsmirnoff.plustagram20.Database.DBHelper;
-import com.bobsmirnoff.plustagram20.Database.DBWorker;
+import com.bobsmirnoff.plustagram20.db.DBHelper;
+import com.bobsmirnoff.plustagram20.db.DBWorker;
 import com.bobsmirnoff.plustagram20.Dialogs.CommentDialog;
 import com.bobsmirnoff.plustagram20.Dialogs.DeleteDialog;
 import com.bobsmirnoff.plustagram20.Dialogs.EditRecordDialog;
@@ -141,7 +141,7 @@ public class SinglePersonActivity extends Activity implements View.OnClickListen
                 break;
 
             case ACTION_DELETE:
-                if (input == RECORD_DELETED_KEY) {
+                if (input.equals(RECORD_DELETED_KEY)) {
                     dbw.deletePerson(entryId);
                     plusesCursor.close();
                     finish();
